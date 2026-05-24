@@ -1,0 +1,50 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model User {
+  id           String       @id @default(cuid())
+  email        String       @unique
+  passwordHash String
+  createdAt    DateTime     @default(now())
+  userArtists  UserArtist[]
+}
+
+model Artist {
+  id             String       @id @default(cuid())
+  name           String
+  bandsintownId  String       @unique
+  imageUrl       String?
+  userArtists    UserArtist[]
+  events         Event[]
+}
+
+model UserArtist {
+  userId    String
+  artistId  String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  artist    Artist   @relation(fields: [artistId], references: [id], onDelete: Cascade)
+
+  @@id([userId, artistId])
+}
+
+model Event {
+  id               String    @id @default(cuid())
+  artistId         String
+  title            String
+  eventType        String
+  date             DateTime
+  venue            String
+  url              String?
+  source           String    @default("unknown")
+  cachedAt         DateTime  @default(now())
+  ticketSaleStart  DateTime?
+  ticketSaleStatus String?
+  artist           Artist    @relation(fields: [artistId], references: [id], onDelete: Cascade)
+}
