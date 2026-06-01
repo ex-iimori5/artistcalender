@@ -1,4 +1,3 @@
-import { chromium } from "playwright";
 import type { ScrapedEvent } from "./types";
 
 const BASE_URL = "https://t.pia.jp";
@@ -28,6 +27,15 @@ export async function scrapePia(artistName: string): Promise<ScrapedEvent[]> {
     await fetch(BASE_URL, { method: "HEAD", signal: AbortSignal.timeout(3000) });
   } catch {
     console.log(`[pia] skipped: host unreachable`);
+    return [];
+  }
+
+  // Playwrightが利用不可の環境（Vercel等）ではスキップ
+  let chromium: import("playwright").BrowserType;
+  try {
+    chromium = (await import("playwright")).chromium;
+  } catch {
+    console.log("[pia] skipped: playwright not available");
     return [];
   }
 
