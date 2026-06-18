@@ -38,19 +38,11 @@ function inferEventType(title: string): string {
 export async function scrapeLawson(artistName: string): Promise<ScrapedEvent[]> {
   const searchUrl = `${BASE_URL}/search/?keyword=${encodeURIComponent(artistName)}&genre_cd=001`;
 
-  // 疎通確認（IPv4環境以外ではスキップ）
-  try {
-    await fetch(BASE_URL, { method: "HEAD", signal: AbortSignal.timeout(3000) });
-  } catch {
-    console.log(`[lawson] skipped: host unreachable`);
-    return [];
-  }
-
   try {
     // Step 1: Search for artist to get their artist page URL
     const searchRes = await fetch(searchUrl, {
       headers: HEADERS,
-      signal: AbortSignal.timeout(10000),
+      signal: AbortSignal.timeout(15000),
       cache: "no-store",
     });
     console.log(`[lawson] search ${searchRes.status} ${searchUrl}`);
@@ -71,7 +63,7 @@ export async function scrapeLawson(artistName: string): Promise<ScrapedEvent[]> 
     // Step 2: Fetch artist page and parse events
     const artistRes = await fetch(artistUrl, {
       headers: HEADERS,
-      signal: AbortSignal.timeout(10000),
+      signal: AbortSignal.timeout(15000),
       cache: "no-store",
     });
     console.log(`[lawson] artist page ${artistRes.status}`);

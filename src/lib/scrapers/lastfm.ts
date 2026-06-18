@@ -12,18 +12,10 @@ const HEADERS = {
 export async function scrapeLastFm(artistName: string): Promise<ScrapedEvent[]> {
   const url = `${BASE_URL}/music/${encodeURIComponent(artistName)}/+events`;
 
-  // 疎通確認（到達不能環境ではスキップ）
-  try {
-    await fetch(BASE_URL, { method: "HEAD", signal: AbortSignal.timeout(3000) });
-  } catch {
-    console.log(`[lastfm] skipped: host unreachable`);
-    return [];
-  }
-
   try {
     const res = await fetch(url, {
       headers: HEADERS,
-      signal: AbortSignal.timeout(10000),
+      signal: AbortSignal.timeout(15000),
       cache: "no-store",
     });
     console.log(`[lastfm] ${res.status} ${url}`);
