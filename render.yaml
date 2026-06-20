@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: artistcalender
+    runtime: node
+    region: singapore
+    buildCommand: npm ci && npx playwright install chromium --with-deps && npm run build
+    startCommand: npm start
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: AUTH_SECRET
+        sync: false
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: "10000"
